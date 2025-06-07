@@ -1,0 +1,1 @@
+# Ransomware-Readiness-Scoring-Tool
