@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+
+{% block title %}Error - Ransomware Resilience Tool{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8 col-lg-6">
+        <div class="card">
+            <div class="card-body text-center py-5">
+                <div class="mb-4">
+                    <i class="fas fa-exclamation-triangle text-warning" style="font-size: 4rem;"></i>
+                </div>
+                
+                <h3 class="mb-3">Oops! Something went wrong</h3>
+                
+                <div class="alert alert-warning">
+                    <strong>Error:</strong> {{ error }}
+                </div>
+                
+                <p class="text-muted mb-4">
+                    We encountered an issue while processing your request. Please try the following steps:
+                </p>
+                
+                <div class="text-start mb-4">
+                    <ul>
+                        <li>Refresh the page and try again</li>
+                        <li>Go back to the previous page</li>
+                        <li>Start a new assessment</li>
+                        <li>Check your internet connection</li>
+                    </ul>
+                </div>
+                
+                <div class="d-grid gap-2">
+                    <a href="{{ url_for('index') }}" class="btn btn-primary">
+                        <i class="fas fa-home me-2"></i>
+                        Return to Dashboard
+                    </a>
+                    <a href="{{ url_for('start_assessment') }}" class="btn btn-outline-primary">
+                        <i class="fas fa-plus me-2"></i>
+                        Start New Assessment
+                    </a>
+                    <button onclick="history.back()" class="btn btn-outline-secondary">
+                        <i class="fas fa-arrow-left me-2"></i>
+                        Go Back
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

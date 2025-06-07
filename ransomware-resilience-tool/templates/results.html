@@ -1,0 +1,606 @@
+{% extends "base.html" %}
+
+{% block title %}Assessment Results - Ransomware Resilience Tool{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <!-- Header -->
+        <div class="card mb-4">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h3 class="mb-1">
+                            <i class="fas fa-chart-bar text-primary me-2"></i>
+                            Assessment Results
+                        </h3>
+                        <p class="text-muted mb-0">{{ session_data.organization }} | Assessed by {{ session_data.assessor }}</p>
+                    </div>
+                    <div class="text-end">
+                        <div class="dropdown">
+                            <button class="btn btn-outline-primary dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                                <i class="fas fa-download me-2"></i>Export Results
+                            </button>
+                            <ul class="dropdown-menu">
+                                <li><a class="dropdown-item" href="#" onclick="exportToPDF()">
+                                    <i class="fas fa-file-pdf me-2"></i>PDF Report (Quick)
+                                </a></li>
+                                <li><a class="dropdown-item" href="#" onclick="exportDetailedPDF()">
+                                    <i class="fas fa-file-pdf me-2"></i>PDF Report (Detailed)
+                                </a></li>
+                                <li><a class="dropdown-item" href="#" onclick="printReport()">
+                                    <i class="fas fa-print me-2"></i>Print Report
+                                </a></li>
+                                <li><hr class="dropdown-divider"></li>
+                                <li><a class="dropdown-item" href="#" onclick="exportResults('json')">
+                                    <i class="fas fa-file-code me-2"></i>JSON Format
+                                </a></li>
+                                <li><a class="dropdown-item" href="#" onclick="exportResults('csv')">
+                                    <i class="fas fa-file-csv me-2"></i>CSV Format
+                                </a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Overall Score -->
+        <div class="row mb-4">
+            <div class="col-md-4">
+                <div class="card text-center h-100">
+                    <div class="card-body d-flex flex-column justify-content-center">
+                        <h2 class="display-3 mb-2 score-display" data-score="{{ scores.overall_assessment.percentage_score }}">
+                            {{ "%.1f"|format(scores.overall_assessment.percentage_score) }}%
+                        </h2>
+                        <h5 class="mb-3">Overall Readiness Score</h5>
+                        <span class="badge readiness-badge fs-6">
+                            {{ scores.overall_assessment.readiness_level }}
+                        </span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-8">
+                <div class="card h-100">
+                    <div class="card-header">
+                        <h6 class="mb-0">
+                            <i class="fas fa-tachometer-alt me-2"></i>
+                            Stage Performance Breakdown
+                        </h6>
+                    </div>
+                    <div class="card-body">
+                        <canvas id="stageChart" width="400" height="200"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Risk Assessment -->
+        <div class="row mb-4">
+            <div class="col-md-6">
+                <div class="card h-100">
+                    <div class="card-header bg-danger text-white">
+                        <h6 class="mb-0">
+                            <i class="fas fa-exclamation-triangle me-2"></i>
+                            Top Risk Areas
+                        </h6>
+                    </div>
+                    <div class="card-body">
+                        {% for area in scores.risk_assessment.top_risk_areas %}
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <span class="fw-bold">{{ area.area }}</span>
+                            <span class="badge bg-danger">{{ "%.1f"|format(area.score) }}%</span>
+                        </div>
+                        <div class="progress mb-3" style="height: 6px;">
+                            <div class="progress-bar bg-danger" 
+                                 role="progressbar" 
+                                 style="width: {{ area.score }}%"></div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-6">
+                <div class="card h-100">
+                    <div class="card-header bg-success text-white">
+                        <h6 class="mb-0">
+                            <i class="fas fa-shield-alt me-2"></i>
+                            Strength Areas
+                        </h6>
+                    </div>
+                    <div class="card-body">
+                        {% for area in scores.strength_assessment.strength_areas %}
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <span class="fw-bold">{{ area.area }}</span>
+                            <span class="badge bg-success">{{ "%.1f"|format(area.score) }}%</span>
+                        </div>
+                        <div class="progress mb-3" style="height: 6px;">
+                            <div class="progress-bar bg-success" 
+                                 role="progressbar" 
+                                 style="width: {{ area.score }}%"></div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Detailed Scores -->
+        <div class="row mb-4">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h6 class="mb-0">
+                            <i class="fas fa-list-alt me-2"></i>
+                            Detailed Stage Scores
+                        </h6>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>Stage</th>
+                                        <th>Score</th>
+                                        <th>Questions Answered</th>
+                                        <th>Weighted Score</th>
+                                        <th>Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for stage_name, stage_score in scores.stage_performance.items() %}
+                                    <tr>
+                                        <td>
+                                            <strong>{{ stage_name.replace('_', ' ').title() }}</strong>
+                                        </td>
+                                        <td>
+                                            <span class="fw-bold">{{ "%.1f"|format(stage_score.percentage) }}%</span>
+                                        </td>
+                                        <td>
+                                            <span class="badge bg-info">
+                                                {{ stage_score.answered_questions }}/{{ stage_score.total_questions }}
+                                            </span>
+                                        </td>
+                                        <td>{{ "%.2f"|format(stage_score.weighted_score) }}</td>
+                                        <td>
+                                            {% if stage_score.percentage >= 80 %}
+                                                <span class="badge bg-success">Excellent</span>
+                                            {% elif stage_score.percentage >= 60 %}
+                                                <span class="badge bg-warning">Good</span>
+                                            {% elif stage_score.percentage >= 40 %}
+                                                <span class="badge bg-orange">Fair</span>
+                                            {% else %}
+                                                <span class="badge bg-danger">Poor</span>
+                                            {% endif %}
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- MITRE Coverage -->
+        <div class="row mb-4">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h6 class="mb-0">
+                            <i class="fas fa-crosshairs me-2"></i>
+                            MITRE ATT&CK Framework Coverage
+                        </h6>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <canvas id="mitreChart" width="300" height="300"></canvas>
+                            </div>
+                            <div class="col-md-6">
+                                <h6 class="mb-3">Coverage Summary:</h6>
+                                <div class="row">
+                                    <div class="col-sm-6">
+                                        <div class="text-center p-3 border rounded">
+                                            <div class="h4 text-primary mb-1">{{ scores.mitre_coverage.techniques_covered }}</div>
+                                            <small class="text-muted">Techniques Covered</small>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-6">
+                                        <div class="text-center p-3 border rounded">
+                                            <div class="h4 text-info mb-1">{{ "%.1f"|format(scores.mitre_coverage.coverage_percentage) }}%</div>
+                                            <small class="text-muted">Coverage Percentage</small>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <h6 class="mt-4 mb-3">Techniques Assessed:</h6>
+                                <div class="technique-list">
+                                    {% for technique_id, technique_data in scores.mitre_coverage.technique_details.items() %}
+                                    <div class="d-flex justify-content-between align-items-center mb-2">
+                                        <span class="small">{{ technique_id }}</span>
+                                        <span class="badge bg-secondary small">{{ "%.1f"|format(technique_data.percentage) }}%</span>
+                                    </div>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Recommendations -->
+        <div class="row mb-4">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h6 class="mb-0">
+                            <i class="fas fa-lightbulb me-2"></i>
+                            Priority Recommendations
+                        </h6>
+                    </div>
+                    <div class="card-body">
+                        {% for action in recommendations.priority_actions[:5] %}
+                        <div class="alert alert-{{ 'danger' if action.priority == 'High' else 'warning' if action.priority == 'Medium' else 'info' }}">
+                            <div class="d-flex justify-content-between align-items-start">
+                                <div>
+                                    <h6 class="alert-heading mb-2">
+                                        <span class="badge bg-{{ 'danger' if action.priority == 'High' else 'warning' if action.priority == 'Medium' else 'info' }} me-2">
+                                            {{ action.priority }}
+                                        </span>
+                                        {{ action.title }}
+                                    </h6>
+                                    <p class="mb-2">{{ action.description }}</p>
+                                    <small class="text-muted">
+                                        <i class="fas fa-clock me-1"></i>
+                                        Timeframe: {{ action.timeframe }}
+                                    </small>
+                                </div>
+                                <div>
+                                    <span class="badge bg-secondary">{{ action.category }}</span>
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                        
+                        <div class="text-center mt-3">
+                            <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#fullRecommendationsModal">
+                                <i class="fas fa-list me-2"></i>
+                                View All Recommendations
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Executive Summary -->
+        <div class="row mb-4">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h6 class="mb-0">
+                            <i class="fas fa-file-alt me-2"></i>
+                            Executive Summary
+                        </h6>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-8">
+                                <h6>Key Findings:</h6>
+                                <ul>
+                                    {% for finding in recommendations.executive_summary.key_findings %}
+                                    <li>{{ finding }}</li>
+                                    {% endfor %}
+                                </ul>
+                                
+                                <h6 class="mt-4">Immediate Actions Required:</h6>
+                                <ul>
+                                    {% for action in recommendations.executive_summary.immediate_actions %}
+                                    <li>{{ action }}</li>
+                                    {% endfor %}
+                                </ul>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="bg-light p-3 rounded">
+                                    <h6>Assessment Summary</h6>
+                                    <hr>
+                                    <div class="d-flex justify-content-between mb-2">
+                                        <span>Overall Score:</span>
+                                        <strong>{{ "%.1f"|format(scores.overall_assessment.percentage_score) }}%</strong>
+                                    </div>
+                                    <div class="d-flex justify-content-between mb-2">
+                                        <span>Readiness Level:</span>
+                                        <strong>{{ scores.overall_assessment.readiness_level }}</strong>
+                                    </div>
+                                    <div class="d-flex justify-content-between mb-2">
+                                        <span>Questions Answered:</span>
+                                        <strong>{{ scores.overall_assessment.total_answered }}/{{ scores.overall_assessment.total_questions }}</strong>
+                                    </div>
+                                    <div class="d-flex justify-content-between">
+                                        <span>Assessment Date:</span>
+                                        <strong>{{ session_data.start_time[:10] }}</strong>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="row">
+            <div class="col-12 text-center">
+                <a href="{{ url_for('start_assessment') }}" class="btn btn-primary me-2">
+                    <i class="fas fa-redo me-2"></i>
+                    New Assessment
+                </a>
+                <a href="{{ url_for('questionnaire') }}" class="btn btn-outline-primary me-2">
+                    <i class="fas fa-edit me-2"></i>
+                    Modify Responses
+                </a>
+                <button class="btn btn-success" onclick="window.print()">
+                    <i class="fas fa-print me-2"></i>
+                    Print Report
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Full Recommendations Modal -->
+<div class="modal fade" id="fullRecommendationsModal" tabindex="-1">
+    <div class="modal-dialog modal-xl">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">
+                    <i class="fas fa-lightbulb me-2"></i>
+                    Complete Recommendations Report
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <!-- 30-60-90 Day Plan -->
+                <h6 class="mb-3">Implementation Timeline</h6>
+                <div class="row mb-4">
+                    <div class="col-md-4">
+                        <div class="card border-danger">
+                            <div class="card-header bg-danger text-white">
+                                <h6 class="mb-0">30 Days (Critical)</h6>
+                            </div>
+                            <div class="card-body">
+                                <ul class="list-unstyled">
+                                    {% for action in recommendations.priority_actions %}
+                                        {% if action.timeframe == "30 days" %}
+                                        <li class="mb-2">
+                                            <i class="fas fa-circle text-danger me-2" style="font-size: 0.5rem;"></i>
+                                            {{ action.title }}
+                                        </li>
+                                        {% endif %}
+                                    {% endfor %}
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="card border-warning">
+                            <div class="card-header bg-warning text-dark">
+                                <h6 class="mb-0">60 Days (Important)</h6>
+                            </div>
+                            <div class="card-body">
+                                <ul class="list-unstyled">
+                                    {% for action in recommendations.priority_actions %}
+                                        {% if action.timeframe == "60 days" %}
+                                        <li class="mb-2">
+                                            <i class="fas fa-circle text-warning me-2" style="font-size: 0.5rem;"></i>
+                                            {{ action.title }}
+                                        </li>
+                                        {% endif %}
+                                    {% endfor %}
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="card border-info">
+                            <div class="card-header bg-info text-white">
+                                <h6 class="mb-0">90 Days (Strategic)</h6>
+                            </div>
+                            <div class="card-body">
+                                <ul class="list-unstyled">
+                                    {% for action in recommendations.priority_actions %}
+                                        {% if action.timeframe == "90 days" %}
+                                        <li class="mb-2">
+                                            <i class="fas fa-circle text-info me-2" style="font-size: 0.5rem;"></i>
+                                            {{ action.title }}
+                                        </li>
+                                        {% endif %}
+                                    {% endfor %}
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- All Recommendations -->
+                <h6 class="mb-3">Complete Action List</h6>
+                <div class="accordion" id="recommendationsAccordion">
+                    {% for action in recommendations.priority_actions %}
+                    <div class="accordion-item">
+                        <h2 class="accordion-header">
+                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#rec{{ loop.index }}">
+                                <span class="badge bg-{{ 'danger' if action.priority == 'High' else 'warning' if action.priority == 'Medium' else 'info' }} me-2">
+                                    {{ action.priority }}
+                                </span>
+                                {{ action.title }}
+                            </button>
+                        </h2>
+                        <div id="rec{{ loop.index }}" class="accordion-collapse collapse" data-bs-parent="#recommendationsAccordion">
+                            <div class="accordion-body">
+                                <p><strong>Description:</strong> {{ action.description }}</p>
+                                <p><strong>Category:</strong> {{ action.category }}</p>
+                                <p><strong>Timeframe:</strong> {{ action.timeframe }}</p>
+                                {% if action.frameworks %}
+                                <p><strong>Related Frameworks:</strong> {{ action.frameworks | join(', ') }}</p>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary" onclick="exportResults('json')">
+                    <i class="fas fa-download me-2"></i>Export Full Report
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+// Color score display based on value
+document.addEventListener('DOMContentLoaded', function() {
+    const scoreElement = document.querySelector('.score-display');
+    const score = parseFloat(scoreElement.dataset.score);
+    
+    if (score >= 80) {
+        scoreElement.classList.add('text-success');
+        document.querySelector('.readiness-badge').classList.add('bg-success');
+    } else if (score >= 60) {
+        scoreElement.classList.add('text-warning');
+        document.querySelector('.readiness-badge').classList.add('bg-warning');
+    } else {
+        scoreElement.classList.add('text-danger');
+        document.querySelector('.readiness-badge').classList.add('bg-danger');
+    }
+    
+    // Initialize charts
+    initializeCharts();
+});
+
+function initializeCharts() {
+    try {
+        // Stage Performance Chart
+        const stageCtx = document.getElementById('stageChart');
+        if (stageCtx) {
+            const stageData = {{ scores.stage_performance | tojson | safe }};
+            
+            new Chart(stageCtx.getContext('2d'), {
+                type: 'bar',
+                data: {
+                    labels: Object.keys(stageData).map(key => key.replace('_', ' ').replace(/\b\w/g, l => l.toUpperCase())),
+                    datasets: [{
+                        label: 'Score Percentage',
+                        data: Object.values(stageData).map(stage => stage.percentage),
+                        backgroundColor: [
+                            'rgba(54, 162, 235, 0.8)',
+                            'rgba(255, 99, 132, 0.8)',
+                            'rgba(255, 205, 86, 0.8)'
+                        ],
+                        borderColor: [
+                            'rgba(54, 162, 235, 1)',
+                            'rgba(255, 99, 132, 1)',
+                            'rgba(255, 205, 86, 1)'
+                        ],
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            max: 100,
+                            ticks: {
+                                callback: function(value) {
+                                    return value + '%';
+                                }
+                            }
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            display: false
+                        }
+                    }
+                }
+            });
+        }
+
+        // MITRE Coverage Chart
+        const mitreCtx = document.getElementById('mitreChart');
+        if (mitreCtx) {
+            const mitreData = {{ scores.mitre_coverage | tojson | safe }};
+            
+            new Chart(mitreCtx.getContext('2d'), {
+                type: 'doughnut',
+                data: {
+                    labels: ['Covered', 'Not Covered'],
+                    datasets: [{
+                        data: [
+                            mitreData.coverage_percentage,
+                            100 - mitreData.coverage_percentage
+                        ],
+                        backgroundColor: [
+                            'rgba(40, 167, 69, 0.8)',
+                            'rgba(220, 53, 69, 0.8)'
+                        ],
+                        borderColor: [
+                            'rgba(40, 167, 69, 1)',
+                            'rgba(220, 53, 69, 1)'
+                        ],
+                        borderWidth: 2
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: {
+                            position: 'bottom'
+                        }
+                    }
+                }
+            });
+        }
+    } catch (error) {
+        console.error('Error initializing charts:', error);
+    }
+}
+
+function exportResults(format) {
+    fetch(`/api/export/${format}`)
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                // Create download link
+                const blob = new Blob([data.data], { 
+                    type: format === 'json' ? 'application/json' : 'text/csv' 
+                });
+                const url = window.URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `ransomware_assessment_results.${format}`;
+                document.body.appendChild(a);
+                a.click();
+                window.URL.revokeObjectURL(url);
+                document.body.removeChild(a);
+            } else {
+                alert('Error exporting results: ' + data.error);
+            }
+        })
+        .catch(error => {
+            console.error('Export error:', error);
+            alert('Error exporting results');
+        });
+}
+</script>
+{% endblock %}

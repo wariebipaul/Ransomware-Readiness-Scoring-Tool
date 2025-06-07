@@ -1,0 +1,245 @@
+{% extends "base.html" %}
+
+{% block title %}Framework Information - Ransomware Resilience Tool{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <div class="card mb-4">
+            <div class="card-body">
+                <h3 class="mb-3">
+                    <i class="fas fa-info-circle text-primary me-2"></i>
+                    Cybersecurity Frameworks & Standards
+                </h3>
+                <p class="lead">
+                    This assessment tool is built upon industry-leading cybersecurity frameworks and standards 
+                    to provide comprehensive ransomware resilience evaluation.
+                </p>
+            </div>
+        </div>
+
+        <!-- MITRE ATT&CK Framework -->
+        <div class="row mb-4">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header bg-primary text-white">
+                        <h5 class="mb-0">
+                            <i class="fas fa-crosshairs me-2"></i>
+                            MITRE ATT&CK Framework Integration
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <p class="mb-3">
+                            The assessment incorporates specific MITRE ATT&CK techniques commonly used in ransomware attacks. 
+                            Each question maps to relevant techniques to provide comprehensive coverage analysis.
+                        </p>
+                        
+                        <h6 class="mb-3">Covered MITRE ATT&CK Techniques:</h6>
+                        <div class="row">
+                            {% for technique_id, technique_info in mitre_techniques.items() %}
+                            <div class="col-md-6 col-lg-4 mb-3">
+                                <div class="card border-info h-100">
+                                    <div class="card-body">
+                                        <h6 class="card-title text-primary">{{ technique_id }}</h6>
+                                        <p class="card-text small">{{ technique_info.name }}</p>
+                                        <span class="badge bg-secondary">{{ technique_info.tactic }}</span>
+                                    </div>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Framework Alignment -->
+        <div class="row mb-4">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header bg-success text-white">
+                        <h5 class="mb-0">
+                            <i class="fas fa-cogs me-2"></i>
+                            Framework Alignment
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <p class="mb-4">
+                            Our recommendations align with multiple cybersecurity frameworks to ensure comprehensive 
+                            coverage and industry best practices compliance.
+                        </p>
+                        
+                        <div class="row">
+                            {% for framework_name, framework_info in frameworks.items() %}
+                            <div class="col-md-6 mb-4">
+                                <div class="card border-light h-100">
+                                    <div class="card-body">
+                                        <h6 class="card-title">{{ framework_name }}</h6>
+                                        <p class="card-text">{{ framework_info.description }}</p>
+                                        
+                                        <h6 class="mt-3 mb-2">Key Controls:</h6>
+                                        <ul class="list-unstyled">
+                                            {% for control in framework_info.key_controls %}
+                                            <li class="mb-1">
+                                                <i class="fas fa-check text-success me-2"></i>
+                                                {{ control }}
+                                            </li>
+                                            {% endfor %}
+                                        </ul>
+                                        
+                                        {% if framework_info.website %}
+                                        <a href="{{ framework_info.website }}" 
+                                           target="_blank" 
+                                           class="btn btn-outline-primary btn-sm">
+                                            <i class="fas fa-external-link-alt me-1"></i>
+                                            Learn More
+                                        </a>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Assessment Methodology -->
+        <div class="row mb-4">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header bg-info text-white">
+                        <h5 class="mb-0">
+                            <i class="fas fa-chart-line me-2"></i>
+                            Assessment Methodology
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <h6>Scoring Approach:</h6>
+                                <ul>
+                                    <li><strong>Weighted Questions:</strong> Each question has a specific weight based on its criticality</li>
+                                    <li><strong>Stage-based Analysis:</strong> Three critical phases of ransomware incidents</li>
+                                    <li><strong>Percentage Scoring:</strong> 0-100% scale for easy interpretation</li>
+                                    <li><strong>Risk Categorization:</strong> Clear readiness levels from Poor to Excellent</li>
+                                </ul>
+                            </div>
+                            <div class="col-md-6">
+                                <h6>Readiness Levels:</h6>
+                                <div class="mb-2">
+                                    <span class="badge bg-success me-2">Excellent</span>
+                                    <span class="text-muted">80-100%</span>
+                                </div>
+                                <div class="mb-2">
+                                    <span class="badge bg-warning me-2">Good</span>
+                                    <span class="text-muted">60-79%</span>
+                                </div>
+                                <div class="mb-2">
+                                    <span class="badge bg-orange me-2">Fair</span>
+                                    <span class="text-muted">40-59%</span>
+                                </div>
+                                <div class="mb-2">
+                                    <span class="badge bg-danger me-2">Poor</span>
+                                    <span class="text-muted">0-39%</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Three Stages -->
+        <div class="row">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header bg-warning text-dark">
+                        <h5 class="mb-0">
+                            <i class="fas fa-shield-virus me-2"></i>
+                            Three-Stage Assessment Framework
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="text-center mb-4">
+                                    <div class="mb-3">
+                                        <i class="fas fa-shield-alt text-primary" style="font-size: 3rem;"></i>
+                                    </div>
+                                    <h6>Pre-Infection Stage</h6>
+                                    <p class="small text-muted">
+                                        Prevention measures, security controls, user training, 
+                                        and proactive defense mechanisms.
+                                    </p>
+                                    <ul class="list-unstyled small text-start">
+                                        <li><i class="fas fa-check text-success me-2"></i>Email security</li>
+                                        <li><i class="fas fa-check text-success me-2"></i>Endpoint protection</li>
+                                        <li><i class="fas fa-check text-success me-2"></i>Network segmentation</li>
+                                        <li><i class="fas fa-check text-success me-2"></i>User awareness</li>
+                                        <li><i class="fas fa-check text-success me-2"></i>Access controls</li>
+                                    </ul>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="text-center mb-4">
+                                    <div class="mb-3">
+                                        <i class="fas fa-exclamation-triangle text-warning" style="font-size: 3rem;"></i>
+                                    </div>
+                                    <h6>Active Infection Stage</h6>
+                                    <p class="small text-muted">
+                                        Detection capabilities, incident response procedures, 
+                                        and immediate containment measures.
+                                    </p>
+                                    <ul class="list-unstyled small text-start">
+                                        <li><i class="fas fa-check text-success me-2"></i>Threat detection</li>
+                                        <li><i class="fas fa-check text-success me-2"></i>Incident response</li>
+                                        <li><i class="fas fa-check text-success me-2"></i>Network isolation</li>
+                                        <li><i class="fas fa-check text-success me-2"></i>Communication plans</li>
+                                        <li><i class="fas fa-check text-success me-2"></i>Evidence preservation</li>
+                                    </ul>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="text-center mb-4">
+                                    <div class="mb-3">
+                                        <i class="fas fa-redo text-success" style="font-size: 3rem;"></i>
+                                    </div>
+                                    <h6>Post-Infection Stage</h6>
+                                    <p class="small text-muted">
+                                        Recovery procedures, business continuity, 
+                                        and lessons learned implementation.
+                                    </p>
+                                    <ul class="list-unstyled small text-start">
+                                        <li><i class="fas fa-check text-success me-2"></i>Backup recovery</li>
+                                        <li><i class="fas fa-check text-success me-2"></i>System restoration</li>
+                                        <li><i class="fas fa-check text-success me-2"></i>Business continuity</li>
+                                        <li><i class="fas fa-check text-success me-2"></i>Forensic analysis</li>
+                                        <li><i class="fas fa-check text-success me-2"></i>Improvement planning</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+// Add custom styling for orange badge
+document.addEventListener('DOMContentLoaded', function() {
+    const style = document.createElement('style');
+    style.textContent = `
+        .badge.bg-orange {
+            background-color: #fd7e14 !important;
+        }
+    `;
+    document.head.appendChild(style);
+});
+</script>
+{% endblock %}

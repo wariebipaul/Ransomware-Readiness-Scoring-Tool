@@ -1,0 +1,429 @@
+{% extends "base.html" %}
+
+{% block title %}Assessment Questionnaire - Ransomware Resilience Tool{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <!-- Progress Header -->
+        <div class="card mb-4">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h4 class="mb-0">
+                        <i class="fas fa-clipboard-list text-primary me-2"></i>
+                        Ransomware Resilience Assessment
+                    </h4>
+                    <span class="badge bg-info fs-6">
+                        <span id="progress-text">{{ "%.0f"|format(progress) }}%</span> Complete
+                    </span>
+                </div>
+                
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <small class="text-muted">Organization:</small>
+                        <div class="fw-bold">{{ session_data.organization }}</div>
+                    </div>
+                    <div class="col-md-6">
+                        <small class="text-muted">Assessor:</small>
+                        <div class="fw-bold">{{ session_data.assessor }} ({{ session_data.role }})</div>
+                    </div>
+                </div>
+                
+                <div class="progress" style="height: 8px;">
+                    <div id="progress-bar" 
+                         class="progress-bar bg-primary" 
+                         role="progressbar" 
+                         style="width: {{ progress }}%"
+                         aria-valuenow="{{ progress }}" 
+                         aria-valuemin="0" 
+                         aria-valuemax="100">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Stage Navigation -->
+        <div class="row mb-4">
+            {% for stage_key, stage_data in questions.items() %}
+            <div class="col-md-4 mb-2">
+                <button class="btn btn-outline-primary w-100 stage-btn" 
+                        data-stage="{{ stage_key }}"
+                        id="stage-btn-{{ stage_key }}">
+                    <i class="fas {{ stage_data.icon }} me-2"></i>
+                    {{ stage_data.title }}
+                    <span class="badge bg-primary ms-2 stage-progress" id="stage-progress-{{ stage_key }}">
+                        0/{{ stage_data.questions|length }}
+                    </span>
+                </button>
+            </div>
+            {% endfor %}
+        </div>
+
+        <!-- Questions Container -->
+        <div id="questions-container">
+            {% for stage_key, stage_data in questions.items() %}
+            <div class="stage-content" id="stage-{{ stage_key }}" style="display: none;">
+                <div class="card">
+                    <div class="card-header bg-primary text-white">
+                        <h5 class="mb-0">
+                            <i class="fas {{ stage_data.icon }} me-2"></i>
+                            {{ stage_data.title }}
+                        </h5>
+                        <p class="mb-0 mt-2 opacity-75">{{ stage_data.description }}</p>
+                    </div>
+                    <div class="card-body">
+                        {% for question in stage_data.questions %}
+                        <div class="question-item mb-4" 
+                             data-stage="{{ stage_key }}" 
+                             data-question="{{ question.id }}">
+                            <div class="row">
+                                <div class="col-12">
+                                    <div class="question-header d-flex justify-content-between align-items-start mb-3">
+                                        <div>
+                                            <h6 class="question-title mb-2">
+                                                <span class="badge bg-secondary me-2">{{ loop.index }}</span>
+                                                {{ question.text }}
+                                            </h6>
+                                            {% if question.description %}
+                                            <p class="text-muted small mb-2">{{ question.description }}</p>
+                                            {% endif %}
+                                            <div class="question-meta">
+                                                <span class="badge bg-light text-dark me-2">
+                                                    Weight: {{ question.weight }}
+                                                </span>
+                                                {% if question.mitre_techniques %}
+                                                <span class="badge bg-info me-2">
+                                                    MITRE: {{ question.mitre_techniques|join(', ') }}
+                                                </span>
+                                                {% endif %}
+                                            </div>
+                                        </div>
+                                        <div class="question-status">
+                                            <i class="fas fa-check-circle text-success question-completed" 
+                                               style="display: none;"></i>
+                                        </div>
+                                    </div>
+                                    
+                                    <!-- Answer Options -->
+                                    <div class="answer-options">
+                                        {% for option in question.options %}
+                                        <div class="form-check mb-2">
+                                            <input class="form-check-input answer-radio" 
+                                                   type="radio" 
+                                                   name="question-{{ stage_key }}-{{ question.id }}" 
+                                                   id="answer-{{ stage_key }}-{{ question.id }}-{{ loop.index0 }}"
+                                                   value="{{ option.value }}"
+                                                   data-stage="{{ stage_key }}"
+                                                   data-question="{{ question.id }}"
+                                                   data-score="{{ option.value }}">
+                                            <label class="form-check-label w-100" 
+                                                   for="answer-{{ stage_key }}-{{ question.id }}-{{ loop.index0 }}">
+                                                <div>
+                                                    <span>{{ option.text }}</span>
+                                                </div>
+                                                {% if option.description %}
+                                                <small class="text-muted d-block mt-1">{{ option.description }}</small>
+                                                {% endif %}
+                                            </label>
+                                        </div>
+                                        {% endfor %}
+                                    </div>
+                                    
+                                    <!-- Comments Section -->
+                                    <div class="mt-3">
+                                        <label for="comments-{{ stage_key }}-{{ question.id }}" 
+                                               class="form-label">
+                                            <i class="fas fa-comment me-1"></i>
+                                            Additional Comments (Optional)
+                                        </label>
+                                        <textarea class="form-control question-comments" 
+                                                  id="comments-{{ stage_key }}-{{ question.id }}"
+                                                  rows="2"
+                                                  placeholder="Add any relevant notes or context..."
+                                                  data-stage="{{ stage_key }}"
+                                                  data-question="{{ question.id }}"></textarea>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        {% if not loop.last %}<hr>{% endif %}
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+
+        <!-- Navigation Buttons -->
+        <div class="row mt-4">
+            <div class="col-12">
+                <div class="d-flex justify-content-between">
+                    <div>
+                        <button id="prev-stage-btn" class="btn btn-outline-secondary" style="display: none;">
+                            <i class="fas fa-arrow-left me-2"></i>Previous Stage
+                        </button>
+                    </div>
+                    <div>
+                        <button id="next-stage-btn" class="btn btn-primary">
+                            Next Stage <i class="fas fa-arrow-right ms-2"></i>
+                        </button>
+                        <a id="view-results-btn" 
+                           href="{{ url_for('results') }}" 
+                           class="btn btn-success" 
+                           style="display: none;">
+                            <i class="fas fa-chart-bar me-2"></i>View Results
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Save Progress Indicator -->
+        <div id="save-indicator" class="position-fixed bottom-0 end-0 m-3" style="display: none;">
+            <div class="alert alert-info mb-0">
+                <i class="fas fa-spinner fa-spin me-2"></i>Saving...
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+// Questionnaire management
+let currentStage = 0;
+const stages = {{ questions.keys() | list | tojson }};
+const sessionData = {{ session_data | tojson }};
+
+// Initialize questionnaire
+document.addEventListener('DOMContentLoaded', function() {
+    loadSavedResponses();
+    showStage(currentStage);
+    updateProgress();
+    bindEventListeners();
+});
+
+function bindEventListeners() {
+    // Stage navigation buttons
+    document.querySelectorAll('.stage-btn').forEach(btn => {
+        btn.addEventListener('click', function() {
+            const stageIndex = stages.indexOf(this.dataset.stage);
+            showStage(stageIndex);
+        });
+    });
+
+    // Answer selection
+    document.querySelectorAll('.answer-radio').forEach(radio => {
+        radio.addEventListener('change', function() {
+            saveResponse(this.dataset.stage, this.dataset.question, {
+                score: parseInt(this.value),
+                answer_text: this.nextElementSibling.textContent.trim(),
+                timestamp: new Date().toISOString()
+            });
+            
+            // Mark question as completed
+            const questionItem = this.closest('.question-item');
+            const statusIcon = questionItem.querySelector('.question-completed');
+            statusIcon.style.display = 'inline';
+            
+            updateProgress();
+        });
+    });
+
+    // Comments
+    document.querySelectorAll('.question-comments').forEach(textarea => {
+        textarea.addEventListener('blur', function() {
+            if (this.value.trim()) {
+                saveComments(this.dataset.stage, this.dataset.question, this.value.trim());
+            }
+        });
+    });
+
+    // Navigation buttons
+    document.getElementById('prev-stage-btn').addEventListener('click', function() {
+        if (currentStage > 0) {
+            showStage(currentStage - 1);
+        }
+    });
+
+    document.getElementById('next-stage-btn').addEventListener('click', function() {
+        if (currentStage < stages.length - 1) {
+            showStage(currentStage + 1);
+        }
+    });
+}
+
+function showStage(stageIndex) {
+    // Hide all stages
+    document.querySelectorAll('.stage-content').forEach(content => {
+        content.style.display = 'none';
+    });
+
+    // Show current stage
+    currentStage = stageIndex;
+    const stageKey = stages[stageIndex];
+    document.getElementById('stage-' + stageKey).style.display = 'block';
+
+    // Update stage buttons
+    document.querySelectorAll('.stage-btn').forEach(btn => {
+        btn.classList.remove('btn-primary');
+        btn.classList.add('btn-outline-primary');
+    });
+    document.getElementById('stage-btn-' + stageKey).classList.remove('btn-outline-primary');
+    document.getElementById('stage-btn-' + stageKey).classList.add('btn-primary');
+
+    // Update navigation buttons
+    const prevBtn = document.getElementById('prev-stage-btn');
+    const nextBtn = document.getElementById('next-stage-btn');
+    const resultsBtn = document.getElementById('view-results-btn');
+
+    prevBtn.style.display = stageIndex > 0 ? 'inline-block' : 'none';
+    
+    if (stageIndex < stages.length - 1) {
+        nextBtn.style.display = 'inline-block';
+        resultsBtn.style.display = 'none';
+    } else {
+        nextBtn.style.display = 'none';
+        resultsBtn.style.display = 'inline-block';
+    }
+
+    // Scroll to top
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function saveResponse(stage, questionId, responseData) {
+    showSaveIndicator();
+    
+    fetch('/api/save-response', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            stage: stage,
+            question_id: questionId,
+            response_data: responseData
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        hideSaveIndicator();
+        if (data.success) {
+            updateProgressBar(data.progress);
+            if (data.completed) {
+                document.getElementById('view-results-btn').style.display = 'inline-block';
+            }
+        } else {
+            console.error('Failed to save response:', data.error);
+        }
+    })
+    .catch(error => {
+        hideSaveIndicator();
+        console.error('Error saving response:', error);
+    });
+}
+
+function saveComments(stage, questionId, comments) {
+    // Save comments as part of the response
+    const existingRadio = document.querySelector(
+        `input[name="question-${stage}-${questionId}"]:checked`
+    );
+    
+    if (existingRadio) {
+        const responseData = {
+            score: parseInt(existingRadio.value),
+            answer_text: existingRadio.nextElementSibling.textContent.trim(),
+            comments: comments,
+            timestamp: new Date().toISOString()
+        };
+        
+        saveResponse(stage, questionId, responseData);
+    }
+}
+
+function loadSavedResponses() {
+    if (sessionData.responses) {
+        Object.keys(sessionData.responses).forEach(stage => {
+            Object.keys(sessionData.responses[stage]).forEach(questionId => {
+                const response = sessionData.responses[stage][questionId];
+                
+                // Check the appropriate radio button
+                const radio = document.querySelector(
+                    `input[name="question-${stage}-${questionId}"][value="${response.score}"]`
+                );
+                if (radio) {
+                    radio.checked = true;
+                    
+                    // Mark as completed
+                    const questionItem = radio.closest('.question-item');
+                    const statusIcon = questionItem.querySelector('.question-completed');
+                    statusIcon.style.display = 'inline';
+                }
+                
+                // Set comments
+                if (response.comments) {
+                    const commentsTextarea = document.getElementById(`comments-${stage}-${questionId}`);
+                    if (commentsTextarea) {
+                        commentsTextarea.value = response.comments;
+                    }
+                }
+            });
+        });
+    }
+}
+
+function updateProgress() {
+    let totalQuestions = 0;
+    let completedQuestions = 0;
+
+    stages.forEach(stage => {
+        const stageQuestions = document.querySelectorAll(`[data-stage="${stage}"] .answer-radio`);
+        const uniqueQuestions = new Set();
+        
+        stageQuestions.forEach(radio => {
+            uniqueQuestions.add(radio.dataset.question);
+        });
+        
+        totalQuestions += uniqueQuestions.size;
+        
+        uniqueQuestions.forEach(questionId => {
+            const checkedRadio = document.querySelector(
+                `input[name="question-${stage}-${questionId}"]:checked`
+            );
+            if (checkedRadio) {
+                completedQuestions++;
+            }
+        });
+        
+        // Update stage progress
+        const stageProgress = document.getElementById(`stage-progress-${stage}`);
+        let stageCompleted = 0;
+        uniqueQuestions.forEach(questionId => {
+            const checkedRadio = document.querySelector(
+                `input[name="question-${stage}-${questionId}"]:checked`
+            );
+            if (checkedRadio) stageCompleted++;
+        });
+        stageProgress.textContent = `${stageCompleted}/${uniqueQuestions.size}`;
+    });
+
+    const progress = totalQuestions > 0 ? (completedQuestions / totalQuestions) * 100 : 0;
+    updateProgressBar(progress);
+}
+
+function updateProgressBar(progress) {
+    document.getElementById('progress-bar').style.width = progress + '%';
+    document.getElementById('progress-text').textContent = Math.round(progress) + '%';
+}
+
+function showSaveIndicator() {
+    document.getElementById('save-indicator').style.display = 'block';
+}
+
+function hideSaveIndicator() {
+    setTimeout(() => {
+        document.getElementById('save-indicator').style.display = 'none';
+    }, 1000);
+}
+</script>
+{% endblock %}

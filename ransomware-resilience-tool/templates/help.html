@@ -1,0 +1,335 @@
+{% extends "base.html" %}
+
+{% block title %}Help & Documentation - Ransomware Resilience Tool{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <div class="card mb-4">
+            <div class="card-body">
+                <h3 class="mb-3">
+                    <i class="fas fa-question-circle text-primary me-2"></i>
+                    Help & Documentation
+                </h3>
+                <p class="lead">
+                    Comprehensive guide to using the Ransomware Resilience Assessment Tool effectively.
+                </p>
+            </div>
+        </div>
+
+        <!-- Quick Start Guide -->
+        <div class="row mb-4">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header bg-primary text-white">
+                        <h5 class="mb-0">
+                            <i class="fas fa-rocket me-2"></i>
+                            Quick Start Guide
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <h6>Getting Started:</h6>
+                                <ol>
+                                    <li>Click "Start Assessment" from the dashboard</li>
+                                    <li>Enter your organization details</li>
+                                    <li>Answer questions across three stages</li>
+                                    <li>Review your results and recommendations</li>
+                                    <li>Export your report for sharing</li>
+                                </ol>
+                            </div>
+                            <div class="col-md-6">
+                                <h6>Tips for Best Results:</h6>
+                                <ul>
+                                    <li>Answer all questions honestly</li>
+                                    <li>Use comments to provide context</li>
+                                    <li>Consult with technical teams when needed</li>
+                                    <li>Review recommendations carefully</li>
+                                    <li>Plan implementation timelines</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- FAQ Section -->
+        <div class="row mb-4">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header bg-info text-white">
+                        <h5 class="mb-0">
+                            <i class="fas fa-question me-2"></i>
+                            Frequently Asked Questions
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="accordion" id="faqAccordion">
+                            <div class="accordion-item">
+                                <h2 class="accordion-header">
+                                    <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#faq1">
+                                        How long does the assessment take?
+                                    </button>
+                                </h2>
+                                <div id="faq1" class="accordion-collapse collapse show" data-bs-parent="#faqAccordion">
+                                    <div class="accordion-body">
+                                        The assessment typically takes 10-15 minutes to complete. It consists of 15 targeted questions 
+                                        across three critical stages. You can save your progress and return to complete it later.
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="accordion-item">
+                                <h2 class="accordion-header">
+                                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq2">
+                                        What do the different score levels mean?
+                                    </button>
+                                </h2>
+                                <div id="faq2" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                                    <div class="accordion-body">
+                                        <ul>
+                                            <li><strong>Excellent (80-100%):</strong> Strong ransomware defenses with minimal gaps</li>
+                                            <li><strong>Good (60-79%):</strong> Solid foundation with some areas for improvement</li>
+                                            <li><strong>Fair (40-59%):</strong> Basic protections in place, significant improvements needed</li>
+                                            <li><strong>Poor (0-39%):</strong> Critical vulnerabilities, immediate action required</li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="accordion-item">
+                                <h2 class="accordion-header">
+                                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq3">
+                                        Can I modify my responses after submitting?
+                                    </button>
+                                </h2>
+                                <div id="faq3" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                                    <div class="accordion-body">
+                                        Yes, you can return to the questionnaire at any time to modify your responses. 
+                                        Your scores and recommendations will be automatically updated based on the new answers.
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="accordion-item">
+                                <h2 class="accordion-header">
+                                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq4">
+                                        How are the recommendations prioritized?
+                                    </button>
+                                </h2>
+                                <div id="faq4" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                                    <div class="accordion-body">
+                                        Recommendations are prioritized based on:
+                                        <ul>
+                                            <li>Risk level of identified gaps</li>
+                                            <li>MITRE ATT&CK technique coverage</li>
+                                            <li>Implementation complexity</li>
+                                            <li>Cost-benefit analysis</li>
+                                            <li>Industry best practices</li>
+                                        </ul>
+                                        High-priority items address critical vulnerabilities with immediate impact.
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="accordion-item">
+                                <h2 class="accordion-header">
+                                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq5">
+                                        What export formats are available?
+                                    </button>
+                                </h2>
+                                <div id="faq5" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                                    <div class="accordion-body">
+                                        You can export your assessment results in multiple formats:
+                                        <ul>
+                                            <li><strong>JSON:</strong> Complete structured data for integration with other tools</li>
+                                            <li><strong>CSV:</strong> Spreadsheet format for analysis and tracking</li>
+                                            <li><strong>Print:</strong> Browser-based printing for hard copies</li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="accordion-item">
+                                <h2 class="accordion-header">
+                                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq6">
+                                        Is my assessment data secure?
+                                    </button>
+                                </h2>
+                                <div id="faq6" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                                    <div class="accordion-body">
+                                        Yes, your assessment data is stored locally in your browser session and is not transmitted 
+                                        to external servers unless you explicitly export it. The tool runs locally and doesn't 
+                                        collect or store personal information beyond your current session.
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- User Guide -->
+        <div class="row mb-4">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header bg-success text-white">
+                        <h5 class="mb-0">
+                            <i class="fas fa-book me-2"></i>
+                            Detailed User Guide
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <h6>Assessment Process:</h6>
+                                <div class="mb-3">
+                                    <strong>1. Organization Setup</strong>
+                                    <p class="small text-muted">
+                                        Provide organization name, assessor information, and role. This helps contextualize 
+                                        the assessment and provides proper attribution in reports.
+                                    </p>
+                                </div>
+                                
+                                <div class="mb-3">
+                                    <strong>2. Stage Navigation</strong>
+                                    <p class="small text-muted">
+                                        Navigate between the three assessment stages: Pre-infection, Active Infection, 
+                                        and Post-infection. Each stage focuses on different aspects of ransomware readiness.
+                                    </p>
+                                </div>
+                                
+                                <div class="mb-3">
+                                    <strong>3. Question Responses</strong>
+                                    <p class="small text-muted">
+                                        Select the most appropriate response for each question. Scores range from 0-4 points 
+                                        based on the level of protection or capability described.
+                                    </p>
+                                </div>
+                            </div>
+                            
+                            <div class="col-md-6">
+                                <h6>Understanding Results:</h6>
+                                <div class="mb-3">
+                                    <strong>Overall Score</strong>
+                                    <p class="small text-muted">
+                                        Weighted average across all stages, presented as a percentage with corresponding 
+                                        readiness level (Poor, Fair, Good, Excellent).
+                                    </p>
+                                </div>
+                                
+                                <div class="mb-3">
+                                    <strong>Stage Performance</strong>
+                                    <p class="small text-muted">
+                                        Individual scores for each of the three stages, helping identify specific 
+                                        areas of strength and weakness.
+                                    </p>
+                                </div>
+                                
+                                <div class="mb-3">
+                                    <strong>MITRE Coverage</strong>
+                                    <p class="small text-muted">
+                                        Analysis of how well your organization addresses specific MITRE ATT&CK techniques 
+                                        commonly used in ransomware attacks.
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Technical Information -->
+        <div class="row mb-4">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header bg-warning text-dark">
+                        <h5 class="mb-0">
+                            <i class="fas fa-cog me-2"></i>
+                            Technical Information
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <h6>System Requirements:</h6>
+                                <ul>
+                                    <li>Modern web browser (Chrome, Firefox, Safari, Edge)</li>
+                                    <li>JavaScript enabled</li>
+                                    <li>No additional plugins required</li>
+                                    <li>Works on desktop, tablet, and mobile devices</li>
+                                </ul>
+                                
+                                <h6 class="mt-4">Browser Support:</h6>
+                                <ul>
+                                    <li>Chrome 90+</li>
+                                    <li>Firefox 88+</li>
+                                    <li>Safari 14+</li>
+                                    <li>Edge 90+</li>
+                                </ul>
+                            </div>
+                            
+                            <div class="col-md-6">
+                                <h6>Troubleshooting:</h6>
+                                <ul>
+                                    <li><strong>Progress not saving:</strong> Ensure JavaScript is enabled and cookies are allowed</li>
+                                    <li><strong>Charts not displaying:</strong> Try refreshing the page or using a different browser</li>
+                                    <li><strong>Export not working:</strong> Check if downloads are blocked by your browser</li>
+                                    <li><strong>Session lost:</strong> Browser session storage may have been cleared</li>
+                                </ul>
+                                
+                                <h6 class="mt-4">Performance Tips:</h6>
+                                <ul>
+                                    <li>Close unnecessary browser tabs</li>
+                                    <li>Ensure stable internet connection</li>
+                                    <li>Use latest browser version</li>
+                                    <li>Clear browser cache if experiencing issues</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Contact Information -->
+        <div class="row">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header bg-secondary text-white">
+                        <h5 class="mb-0">
+                            <i class="fas fa-envelope me-2"></i>
+                            Support & Contact
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <h6>Need Help?</h6>
+                                <p>
+                                    If you encounter any issues or have questions about the assessment tool, 
+                                    please refer to this documentation first. For technical support or 
+                                    feature requests, contact your IT administrator.
+                                </p>
+                            </div>
+                            <div class="col-md-6">
+                                <h6>Tool Information:</h6>
+                                <ul class="list-unstyled">
+                                    <li><strong>Version:</strong> 1.0.0</li>
+                                    <li><strong>Last Updated:</strong> 2024</li>
+                                    <li><strong>Framework Base:</strong> MITRE ATT&CK</li>
+                                    <li><strong>Compliance:</strong> NIST CSF, ISO 27001</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

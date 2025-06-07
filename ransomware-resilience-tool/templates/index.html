@@ -1,0 +1,222 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard - Ransomware Resilience Assessment{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <div class="jumbotron bg-gradient text-white text-center py-5 mb-5" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+            <div class="container">
+                <h1 class="display-4 fw-bold">
+                    <i class="fas fa-shield-virus me-3"></i>
+                    Ransomware Resilience Assessment
+                </h1>
+                <p class="lead mb-4">
+                    Comprehensive evaluation of your organization's readiness against ransomware attacks
+                </p>
+                <p class="mb-4">
+                    Based on MITRE ATT&CK Framework with actionable recommendations
+                </p>
+                <a href="{{ url_for('start_assessment') }}" class="btn btn-light btn-lg">
+                    <i class="fas fa-play me-2"></i>Start Assessment
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-4 mb-4">
+        <div class="card h-100 shadow-sm">
+            <div class="card-body text-center">
+                <div class="mb-3">
+                    <i class="fas fa-bullseye text-primary" style="font-size: 3rem;"></i>
+                </div>
+                <h5 class="card-title">Comprehensive Assessment</h5>
+                <p class="card-text">
+                    Evaluate your organization across three critical stages: 
+                    pre-infection, active infection, and post-infection recovery.
+                </p>
+                <a href="{{ url_for('start_assessment') }}" class="btn btn-primary">
+                    Begin Assessment
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-4 mb-4">
+        <div class="card h-100 shadow-sm">
+            <div class="card-body text-center">
+                <div class="mb-3">
+                    <i class="fas fa-chart-line text-success" style="font-size: 3rem;"></i>
+                </div>
+                <h5 class="card-title">Detailed Scoring</h5>
+                <p class="card-text">
+                    Get weighted scores based on MITRE ATT&CK techniques with 
+                    clear readiness levels and risk assessments.
+                </p>
+                <button class="btn btn-outline-success" disabled>
+                    Complete Assessment First
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-4 mb-4">
+        <div class="card h-100 shadow-sm">
+            <div class="card-body text-center">
+                <div class="mb-3">
+                    <i class="fas fa-lightbulb text-warning" style="font-size: 3rem;"></i>
+                </div>
+                <h5 class="card-title">Actionable Recommendations</h5>
+                <p class="card-text">
+                    Receive prioritized action plans with framework alignment 
+                    and 30-60-90 day implementation roadmaps.
+                </p>
+                <button class="btn btn-outline-warning" disabled>
+                    Complete Assessment First
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row mt-5">
+    <div class="col-12">
+        <h3 class="mb-4">
+            <i class="fas fa-info-circle text-info me-2"></i>
+            About This Tool
+        </h3>
+        
+        <div class="row">
+            <div class="col-md-6">
+                <div class="card border-info mb-4">
+                    <div class="card-header bg-info text-white">
+                        <h6 class="mb-0">
+                            <i class="fas fa-cogs me-2"></i>Assessment Framework
+                        </h6>
+                    </div>
+                    <div class="card-body">
+                        <ul class="list-unstyled mb-0">
+                            <li><i class="fas fa-check text-success me-2"></i>MITRE ATT&CK Framework Integration</li>
+                            <li><i class="fas fa-check text-success me-2"></i>NIST Cybersecurity Framework Alignment</li>
+                            <li><i class="fas fa-check text-success me-2"></i>ISO 27001 Best Practices</li>
+                            <li><i class="fas fa-check text-success me-2"></i>Weighted Scoring System</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-6">
+                <div class="card border-success mb-4">
+                    <div class="card-header bg-success text-white">
+                        <h6 class="mb-0">
+                            <i class="fas fa-users me-2"></i>Target Audience
+                        </h6>
+                    </div>
+                    <div class="card-body">
+                        <ul class="list-unstyled mb-0">
+                            <li><i class="fas fa-user-tie text-primary me-2"></i>IT Managers and Directors</li>
+                            <li><i class="fas fa-user-shield text-primary me-2"></i>Security Teams</li>
+                            <li><i class="fas fa-user-cog text-primary me-2"></i>IT Staff and Administrators</li>
+                            <li><i class="fas fa-chart-bar text-primary me-2"></i>Risk Management Teams</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row mt-4">
+    <div class="col-12">
+        <div class="card border-0 bg-light">
+            <div class="card-body">
+                <h5 class="card-title text-center mb-4">
+                    <i class="fas fa-clock text-info me-2"></i>
+                    Assessment Process
+                </h5>
+                <div class="row text-center">
+                    <div class="col-md-3">
+                        <div class="step-item">
+                            <div class="step-number bg-primary text-white rounded-circle mx-auto mb-3 d-flex align-items-center justify-content-center" style="width: 60px; height: 60px;">
+                                <span class="fw-bold">1</span>
+                            </div>
+                            <h6>Organization Setup</h6>
+                            <p class="text-muted small">Provide organization details and assessor information</p>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="step-item">
+                            <div class="step-number bg-primary text-white rounded-circle mx-auto mb-3 d-flex align-items-center justify-content-center" style="width: 60px; height: 60px;">
+                                <span class="fw-bold">2</span>
+                            </div>
+                            <h6>Complete Questionnaire</h6>
+                            <p class="text-muted small">Answer 15 targeted questions across 3 critical stages</p>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="step-item">
+                            <div class="step-number bg-primary text-white rounded-circle mx-auto mb-3 d-flex align-items-center justify-content-center" style="width: 60px; height: 60px;">
+                                <span class="fw-bold">3</span>
+                            </div>
+                            <h6>View Results</h6>
+                            <p class="text-muted small">Get detailed scores and risk assessments</p>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="step-item">
+                            <div class="step-number bg-primary text-white rounded-circle mx-auto mb-3 d-flex align-items-center justify-content-center" style="width: 60px; height: 60px;">
+                                <span class="fw-bold">4</span>
+                            </div>
+                            <h6>Get Recommendations</h6>
+                            <p class="text-muted small">Receive actionable improvement plans</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Session Status (if active) -->
+<div id="session-status" class="mt-4" style="display: none;">
+    <div class="alert alert-info">
+        <h6><i class="fas fa-clock me-2"></i>Active Assessment Session</h6>
+        <p class="mb-2">Organization: <span id="session-org"></span></p>
+        <p class="mb-2">Assessor: <span id="session-assessor"></span></p>
+        <div class="progress mb-2">
+            <div id="session-progress" class="progress-bar" role="progressbar" style="width: 0%"></div>
+        </div>
+        <small class="text-muted">Progress: <span id="session-progress-text">0%</span></small>
+        <div class="mt-2">
+            <a href="{{ url_for('questionnaire') }}" class="btn btn-sm btn-primary">Continue Assessment</a>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+// Check for active session on page load
+document.addEventListener('DOMContentLoaded', function() {
+    checkSessionStatus();
+});
+
+function checkSessionStatus() {
+    fetch('/api/session-status')
+        .then(response => response.json())
+        .then(data => {
+            if (data.session_active) {
+                document.getElementById('session-org').textContent = data.organization;
+                document.getElementById('session-assessor').textContent = data.assessor;
+                document.getElementById('session-progress').style.width = data.progress + '%';
+                document.getElementById('session-progress-text').textContent = Math.round(data.progress) + '%';
+                document.getElementById('session-status').style.display = 'block';
+            }
+        })
+        .catch(error => console.log('No active session'));
+}
+</script>
+{% endblock %}
